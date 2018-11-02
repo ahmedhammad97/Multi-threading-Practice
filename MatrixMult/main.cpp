@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <ctime>
+#include <thread>
 
 using namespace std;
 
@@ -53,17 +54,48 @@ void readInput(vector<vector<int>>& m1, vector<vector<int>>& m2){
 }
 
 
-void matrixMultiplyByElement(vector<vector<int>>& m1, vector<vector<int>>& m2, vector<vector<int>>& result){
-
+void initializeWithZeros(vector<vector<int>>& matrix, int rows, int cols){
+    for(int i=0; i<rows; i++){
+        vector<int> tempRow;
+        for(int k=0; k<cols; k++){
+            tempRow.push_back(0);
+        }
+        matrix.push_back(tempRow);
+    }
 }
 
 
 void matrixMultiplyByElement(vector<vector<int>>& m1, vector<vector<int>>& m2, vector<vector<int>>& result){
+    //Initialize result with zeros
+    initializeWithZeros(result, m1.size(), m2[0].size());
+    vector<thread> threads(m1.size() * m2[0].size());
+
+
+    for(int i=0; i<m1.size(); i++){
+        for(int j=0; j<m2[0].size(); j++){
+            //Create threads
+            for(int t=0; t<threads.size(); t++){
+                threads[i] = thread{[&](){
+                    for(int k=0; k<m1[0].size(); k++){
+                        result[i][j] += m1[i][k] * m2[k][j];
+                    }
+                }};
+            }
+        }
+    }
+
+    for(int i=0; i< m1.size() * m2[0].size(); i++){
+        threads[i].join();
+    }
+}
+
+
+void matrixMultiplyByRow(vector<vector<int>>& m1, vector<vector<int>>& m2, vector<vector<int>>& result){
 
 }
 
 
-void writeOutput(vector<vector<int>>& result1, elapsed1, vector<vector<int>>& result2, elapsed2){
+void writeOutput(vector<vector<int>>& result1, time_t elapsed1, vector<vector<int>>& result2, time_t elapsed2){
     ofstream outFile;
     outFile.open("output.txt");
 
@@ -100,16 +132,16 @@ int main()
     readInput(m1,m2);
 
     //Do Multiplication
-    vector<vector<int> result1;
-    vector<vector<int> result2;
+    vector<vector<int>> result1;
+    vector<vector<int>> result2;
 
     time_t elapsed1 = time(NULL);
     matrixMultiplyByElement(m1, m2, result1);
     elapsed1 = time(NULL) - elapsed1;
 
-    time_t elapsed2 = time(NULL);
+    /*time_t elapsed2 = time(NULL);
     matrixMultiplyByRow(m1, m2m result2);
-    elapsed2 = time(NULL) - elapsed2;
+    elapsed2 = time(NULL) - elapsed2;*/
 
     //Write Output
     writeOutput(result1, elapsed1, result2, elapsed2);
