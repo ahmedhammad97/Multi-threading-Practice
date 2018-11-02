@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <ctime>
+#include <chrono>
 #include <thread>
 
 using namespace std;
+using namespace std::chrono;
 
 void readInput(vector<vector<int>>& m1, vector<vector<int>>& m2){
     ifstream inFile;
@@ -70,32 +71,42 @@ void matrixMultiplyByElement(vector<vector<int>>& m1, vector<vector<int>>& m2, v
     initializeWithZeros(result, m1.size(), m2[0].size());
     vector<thread> threads(m1.size() * m2[0].size());
 
-
+    int t=0;
     for(int i=0; i<m1.size(); i++){
         for(int j=0; j<m2[0].size(); j++){
-            //Create threads
-            for(int t=0; t<threads.size(); t++){
-                threads[i] = thread{[&](){
-                    for(int k=0; k<m1[0].size(); k++){
-                        result[i][j] += m1[i][k] * m2[k][j];
-                    }
-                }};
-            }
+            threads[t] = thread{[&](){
+                for(int k=0; k<m1[0].size(); k++){
+                    result[i][j] += m1[i][k] * m2[k][j];
+                }
+            }};
+            threads[t].join();
+            t++;
         }
-    }
-
-    for(int i=0; i< m1.size() * m2[0].size(); i++){
-        threads[i].join();
     }
 }
 
 
 void matrixMultiplyByRow(vector<vector<int>>& m1, vector<vector<int>>& m2, vector<vector<int>>& result){
+    //Initialize result with zeros
+    initializeWithZeros(result, m1.size(), m2[0].size());
+    vector<thread> threads(m1.size() * m2[0].size());
 
+    int t=0;
+    for(int i=0; i<m1.size(); i++){
+        threads[t] = thread{[&](){
+            for(int j=0; j<m2[0].size(); j++){
+                for(int k=0; k<m1[0].size(); k++){
+                    result[i][j] += m1[i][k] * m2[k][j];
+                }
+            }
+        }};
+        threads[t].join();
+        t++;
+    }
 }
 
 
-void writeOutput(vector<vector<int>>& result1, time_t elapsed1, vector<vector<int>>& result2, time_t elapsed2){
+void writeOutput(vector<vector<int>>& result1, auto elapsed1, vector<vector<int>>& result2, auto elapsed2){
     ofstream outFile;
     outFile.open("output.txt");
 
@@ -106,7 +117,7 @@ void writeOutput(vector<vector<int>>& result1, time_t elapsed1, vector<vector<in
         }
         outFile << "\n";
     }
-    outFile << "END1\t\t" << elapsed1 <<endl;
+    outFile << "END1\t\t" << elapsed1 << " microseconds"<<endl;
     /** End Writing result1 **/
 
 
@@ -117,7 +128,7 @@ void writeOutput(vector<vector<int>>& result1, time_t elapsed1, vector<vector<in
         }
         outFile << "\n";
     }
-    outFile << "END2\t\t" << elapsed2 <<endl;
+    outFile << "END2\t\t" << elapsed2 << " microseconds"<<endl;
     /** End Writing result2 **/
 
 
@@ -135,13 +146,15 @@ int main()
     vector<vector<int>> result1;
     vector<vector<int>> result2;
 
-    time_t elapsed1 = time(NULL);
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
     matrixMultiplyByElement(m1, m2, result1);
-    elapsed1 = time(NULL) - elapsed1;
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    auto elapsed1 = duration_cast<microseconds>( t2 - t1 ).count();
 
-    /*time_t elapsed2 = time(NULL);
-    matrixMultiplyByRow(m1, m2m result2);
-    elapsed2 = time(NULL) - elapsed2;*/
+    t1 = high_resolution_clock::now();
+    matrixMultiplyByRow(m1, m2, result2);
+    t2 = high_resolution_clock::now();
+    auto elapsed2 = duration_cast<microseconds>( t2 - t1 ).count();
 
     //Write Output
     writeOutput(result1, elapsed1, result2, elapsed2);
