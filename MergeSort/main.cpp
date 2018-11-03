@@ -50,9 +50,12 @@ void merge(vector<int>& arr, int start, int middle, int end){
 void mergeSort(vector<int>& arr, int start, int end){
     if(end>start){
 
-        mergeSort(arr, start, (start+end)/2);
+        thread t1{[&](){mergeSort(arr, start, (start+end)/2);}};
 
-        mergeSort(arr, ((start+end)/2)+1, end);
+        thread t2{[&](){mergeSort(arr, ((start+end)/2)+1, end);}};
+
+        t1.join();
+        t2.join();
 
         merge(arr, start, (start+end)/2, end);
     }
