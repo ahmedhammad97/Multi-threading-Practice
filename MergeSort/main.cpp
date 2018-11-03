@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <thread>
+#include <cmath>
 
 using namespace std;
 
@@ -48,8 +49,11 @@ void merge(vector<int>& arr, int start, int middle, int end){
 
 void mergeSort(vector<int>& arr, int start, int end){
     if(end>start){
+
         mergeSort(arr, start, (start+end)/2);
+
         mergeSort(arr, ((start+end)/2)+1, end);
+
         merge(arr, start, (start+end)/2, end);
     }
 }
@@ -59,12 +63,15 @@ void printArray(vector<int>& arr){
     for(auto& num : arr){
         cout<<num<<" ";
     }
+    cout<<"\n";
 }
 
 int main()
 {
     vector<int> arr;
     readInput(arr);
+    vector<thread> threads(log2(arr.size())+1);
+
     mergeSort(arr, 0, arr.size()-1);
     printArray(arr);
     return 0;

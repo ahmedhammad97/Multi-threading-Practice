@@ -1,7 +1,0 @@
-# depslib dependency file v1.0
-1541198841 source:/home/ahmedhammad97/Desktop/Threads/MergeSort/main.cpp
-	<iostream>
-	<vector>
-	<fstream>
-	<thread>
-

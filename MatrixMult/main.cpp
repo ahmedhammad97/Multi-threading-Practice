@@ -94,7 +94,7 @@ void matrixMultiplyByElement(vector<vector<int>>& m1, vector<vector<int>>& m2, v
 void matrixMultiplyByRow(vector<vector<int>>& m1, vector<vector<int>>& m2, vector<vector<int>>& result){
     //Initialize result with zeros
     initializeWithZeros(result, m1.size(), m2[0].size());
-    vector<thread> threads(m1.size() * m2[0].size());
+    vector<thread> threads(m1.size());
 
     int t=0;
     for(int i=0; i<m1.size(); i++){
