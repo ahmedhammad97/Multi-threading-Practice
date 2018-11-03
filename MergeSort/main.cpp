@@ -6,6 +6,11 @@
 
 using namespace std;
 
+/**
+Coded by : Ahmed Hammad
+All copyrights reserved
+**/
+
 void readInput(vector<int>& arr){
     ifstream inFile;
     inFile.open("input.txt");
