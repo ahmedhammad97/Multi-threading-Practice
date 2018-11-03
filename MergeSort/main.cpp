@@ -73,8 +73,6 @@ int main()
 {
     vector<int> arr;
     readInput(arr);
-    vector<thread> threads(log2(arr.size())+1);
-
     mergeSort(arr, 0, arr.size()-1);
     printArray(arr);
     return 0;
