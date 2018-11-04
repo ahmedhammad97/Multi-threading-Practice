@@ -11,7 +11,7 @@ Compiling the programs on a Linux system requires specifying the threading libra
 	g++ main.cpp -std=c++14 -pthread -o run.out
     
  ## Conclusion
- When using a multi-core machine, breaking the program into separate threads that can run dependently on different cores, can significantly enhance the performance.
+ When using a multi-core machine, breaking the program into separate threads that can run independently on different cores, can significantly enhance the performance.
  
  However, increasing the number of threads does not guarantee by any means an increase in performance, a sweet spot of reasonable number of thread -_that minimize the overhead cost and maximize the division of performance load_-, must be chosen wisely.
  
